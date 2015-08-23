@@ -4,8 +4,5 @@
 int main()
 {
 	initServer();
-	while(1) {
-
-	}
         return 0;
 }
