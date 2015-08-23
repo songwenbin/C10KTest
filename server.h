@@ -3,11 +3,11 @@
 
 #include <string.h>
 #include <sys/types.h>
+
 #include "ae.h"
+#include "adlist.h"
 
 #define ANET_ERR_LEN 256
-
-void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask);
 
 struct wakeupServer {
         char neterr[ANET_ERR_LEN];
@@ -15,7 +15,13 @@ struct wakeupServer {
 	aeEventLoop *el;
 	int ipfd[16];
 	int ipfd_count;
+	list *clients;
+	int connect_num;
 };
+
+typedef struct client {
+        int fd;
+} client;
 
 struct wakeupServer server;
 

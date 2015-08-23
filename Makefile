@@ -1,5 +1,5 @@
-wakeserver: main.o server.o anet.o ae_epoll.o ae.o zmalloc.o
-	cc -o wakeserver main.o server.o anet.o ae_epoll.o ae.o zmalloc.o -I.
+wakeserver: main.o server.o anet.o ae_epoll.o ae.o zmalloc.o networking.o adlist.o
+	cc -o wakeserver main.o server.o anet.o ae_epoll.o ae.o zmalloc.o networking.o adlist.o -I.
 
 clean:
 	rm -rf *.o

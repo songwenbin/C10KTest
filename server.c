@@ -1,27 +1,16 @@
 #include "server.h"
+#include "networking.h"
 #include "anet.h"
 #include <stdio.h>
 #include <errno.h>
 
-void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask) {
-        int max = 1000;
-	int cport, cfd;
-	char cip[46];
-
-	while(max--) {
-                cfd = anetTcpAccept(server.neterr, fd, cip, sizeof(cip), &cport);
-	        if (cfd == ANET_ERR) {
-		       if (errno != EWOULDBLOCK) {
-                               printf("Accepting clinet connect: %s", server.neterr);
-		       }
-		       return;
-	       }	       
-	}
-}
 
 void initServer(void)
 {
-	server.el = aeCreateEventLoop(1024);
+	server.clients = listCreate();
+	server.connect_num = 0;
+	server.tcp_backlog = 1000;
+	server.el = aeCreateEventLoop(20000);
         listenServer(8888, server.ipfd, &server.ipfd_count);
 
 	int j;
