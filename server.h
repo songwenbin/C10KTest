@@ -2,10 +2,14 @@
 #define _WAKEUP_SERVER_HEADER_
 
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 
 #include "ae.h"
 #include "adlist.h"
+#include "wstable.h"
 
 #define ANET_ERR_LEN 256
 
@@ -17,10 +21,13 @@ struct wakeupServer {
 	int ipfd_count;
 	list *clients;
 	int connect_num;
+	struct WSTable *table;
 };
 
 typedef struct client {
         int fd;
+	char* querybuf;
+	size_t querybuf_peak;
 } client;
 
 struct wakeupServer server;
