@@ -20,7 +20,7 @@ client *createClient(int fd)
 
 	if (aeCreateFileEvent(server.el, fd, AE_READABLE, readDataFromClient, cli) == AE_ERR) {
 		close(fd);
-                zfree(cli);
+                free(cli);
 	}
 
 	cli->querybuf = (char *)malloc(sizeof(char)*1024);
@@ -102,7 +102,7 @@ void processInputBuffer(client *c) {
 	int len = 0;
 
 	if (parseProtocolHeader(c) == DEVICE_CONN) {
-		id = parseDeviceId(c, &len);	
+		id = parseDeviceId(c, &len);
 		if (len > 1024 - c->querybuf_idx) {
 			c->querybuf_idx = 0;
 			return;
