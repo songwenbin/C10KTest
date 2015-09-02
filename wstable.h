@@ -9,18 +9,21 @@
 
 struct WSEntry {
 	char id[DEVICE_ID_LEN];
+	int idLen;
 	int fd;
+	int timeout;
 };
 
 struct WSTable {
 	list *wsEntry;
         int max_entry;
-	int id_length;
 };
 
 struct WSEntry *createWSEntry();
 struct WSTable *CreateWSTable();
 list *getEntryList(struct WSTable *table);
-void addWSEntry(struct WSTable *table, int fd, char *id);
+void createFdofWSEntry(struct WSTable *table, int fd);
+void addId2WSEntry(struct WSTable *table, int fd, char *id, int idLen);
+int getFDofWSEntryById(struct WSTable *table, char* id, int size);
 
 #endif

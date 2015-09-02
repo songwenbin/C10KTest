@@ -10,7 +10,6 @@ struct WSTable *CreateWSTable()
 	struct WSTable *table = (struct WSTable *)malloc(sizeof(struct WSTable));
 	table->wsEntry = listCreate();
 	table->max_entry = MAX_ENTRY;
-	table->id_length = DEVICE_ID_LEN;
 
 	return table;
 }
@@ -20,28 +19,41 @@ list *getEntryList(struct WSTable *table)
         return table->wsEntry;
 }
 
-void addWSEntry(struct WSTable *table, int fd, char *id)
+void createFdofWSEntry(struct WSTable *table, int fd)
 {
-	int i;
         struct WSEntry *entry = createWSEntry();
      	entry->fd = fd;
-        for (i = 0; i < DEVICE_ID_LEN; i ++) {
-                entry->id[i] = id[i]; 
-        }
         listAddNodeTail(table->wsEntry, entry);
 }
 
-void delWSEntry(struct WSTable *table, )
+void addId2WSEntry(struct WSTable *table, int fd, char *id, int idLen)
 {
-
+	struct WSEntry *entry;
+        listNode *ln;
+	listIter li;
+	listRewind(getEntryList(table), &li);
+	while ((ln = listNext(&li)) != NULL) {
+		entry = listNodeValue(ln);	
+		if (entry->fd == fd) {
+			entry->idLen = idLen;
+			memcpy(entry->id, id, idLen);
+		}
+	}
 }
 
-void searchWSEntryByFd(struct WSTable *table, int fd)
+int getFDofWSEntryById(struct WSTable *table, char* id, int size)
 {
-	
-}
+	struct WSEntry *entry;
 
-void searchWSEntryById(struct WSTable *table, char* id)
-{
+        listNode *ln;
+	listIter li;
+	listRewind(getEntryList(table), &li);
+	while ((ln = listNext(&li)) != NULL) {
+		entry = listNodeValue(ln);
+		if (memcmp(entry->id, id, size) == 0) {
+			return entry->fd;
+		}
+	}
 
+	return -1;
 }

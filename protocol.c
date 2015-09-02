@@ -4,18 +4,19 @@
 
 int parseProtocolHeader(client *c)
 {
-	if (c->querybuf[0] == DEVICE_CONN) {
+	if (c->querybuf[c->querybuf_idx++] == DEVICE_CONN) {
 		return DEVICE_CONN;
 	}
 
-	return 0;
+	return -1;
 }
 
-char * getDeviceId(client *c)
+char * parseDeviceId(client *c, int *len)
 {
-	char *id = malloc((int)c->querybuf[1]*sizeof(char) + 1);
-	memcpy(id, &(c->querybuf[2]), (int)c->querybuf[1] + 1);
-	id[2] = '\0';
+	*len = c->querybuf[c->querybuf_idx++];
+	char *id = malloc((*len) * sizeof(char));
+	memcpy(id, &(c->querybuf[c->querybuf_idx]), *len);
+	c->querybuf_idx = 0;
 
 	return id;
 }

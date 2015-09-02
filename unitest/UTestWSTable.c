@@ -11,37 +11,43 @@ void TestWSTableInit(CuTest *tc)
 
 	server.table = CreateWSTable();
 	CuAssertPtrNotNull(tc, server.table);
-
-	/*  
-	int freecount = 0;
-	list *l = getFreeList(server.table);
-	listNode *ln;
-	listIter li;
-	listRewind(l, &li);
-	while ((ln = listNext(&li)) != NULL) {
-		freecount ++;
-	}
-	CuAssertIntEquals(tc, 200, freecount);
-
-	int usedcount = 0;
-	l = getUsedList(server.table);
-	listRewind(l, &li);
-	while ((ln = listNext(&li)) != NULL) {
-		usedcount ++;
-	}
-	CuAssertIntEquals(tc, 0, usedcount);
-	*/
 }
 
 void TestWSTableAdd(CuTest *tc)
 {
 	server.table = CreateWSTable();
-	addWSEntry(server.table, 3, "abcdefghi");
+	createFdofWSEntry(server.table, 4);
+	createFdofWSEntry(server.table, 3);
+
+	int usedcount = 0;
+	listNode *ln;
+	listIter li;
+	list *l = getEntryList(server.table);
+	listRewind(l, &li);
+	while ((ln = listNext(&li)) != NULL) {
+		usedcount ++;
+	}
+	CuAssertIntEquals(tc, 2, usedcount);
+}
+
+void TestWSTableSearch(CuTest *tc)
+{
+	int expectedFd = 3;
+	int actualFd = 0;
+
+	server.table = CreateWSTable();
+	createFdofWSEntry(server.table, 3);
+	addId2WSEntry(server.table, 3, "abcdefghi", 9);
+	actualFd = getFDofWSEntryById(server.table, "abcdefghi", 9);
+
+	CuAssertIntEquals(tc, expectedFd, actualFd);
 }
 
 CuSuite* WSTableSuite()
 {
 	CuSuite* suite = CuSuiteNew();
 	SUITE_ADD_TEST(suite, TestWSTableInit);
+	SUITE_ADD_TEST(suite, TestWSTableSearch);
+	SUITE_ADD_TEST(suite, TestWSTableAdd);
 	return suite;
 }

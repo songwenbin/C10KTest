@@ -27,7 +27,7 @@ struct wakeupServer {
 typedef struct client {
         int fd;
 	char* querybuf;
-	size_t querybuf_peak;
+	int querybuf_idx;
 } client;
 
 struct wakeupServer server;

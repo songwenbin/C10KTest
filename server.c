@@ -8,6 +8,7 @@
 void initServer(void)
 {
 	server.clients = listCreate();
+	server.table = CreateWSTable();
 	server.connect_num = 0;
 	server.tcp_backlog = 1000;
 	server.el = aeCreateEventLoop(20000);
