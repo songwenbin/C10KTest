@@ -43,11 +43,29 @@ void TestWSTableSearch(CuTest *tc)
 	CuAssertIntEquals(tc, expectedFd, actualFd);
 }
 
+void TestWSTableDel(CuTest *tc)
+{
+	struct WSEntry *result;
+	server.table = CreateWSTable();
+	createFdofWSEntry(server.table, 3);
+
+	addId2WSEntry(server.table, 3, "DelEntryTest1", 13);
+	addId2WSEntry(server.table, 3, "DelEntryTest2", 13);
+	addId2WSEntry(server.table, 3, "DelEntryTest", 12);
+	result = searchWSEntryById(server.table, "DelEntryTest", 12);
+	CuAssertPtrNotNull(tc, result);
+
+	delWSEntryById(server.table, "DelEntryTest", 12);
+	result = searchWSEntryById(server.table, "DelEntryTest", 12);
+	CuAssertPtrEquals(tc, NULL, result);
+}
+
 CuSuite* WSTableSuite()
 {
 	CuSuite* suite = CuSuiteNew();
 	SUITE_ADD_TEST(suite, TestWSTableInit);
 	SUITE_ADD_TEST(suite, TestWSTableSearch);
 	SUITE_ADD_TEST(suite, TestWSTableAdd);
+	SUITE_ADD_TEST(suite, TestWSTableDel);
 	return suite;
 }

@@ -4,10 +4,20 @@
 
 int parseProtocolHeader(client *c)
 {
-	if (c->querybuf[c->querybuf_idx++] == DEVICE_CONN) {
-		return DEVICE_CONN;
+	char head = c->querybuf[c->querybuf_idx++];
+	if (head == REGISTER_DEVICE_HEAD) {
+		goto register_device;
+	} else if(head == WAKEUP_DEVICE_HEAD) {
+		goto wakeup_device;
+	} else {
+		goto error_device;
 	}
 
+register_device:
+	return REGISTER_DEVICE_HEAD;
+wakeup_device:
+	return WAKEUP_DEVICE_HEAD;
+error_device:
 	return -1;
 }
 

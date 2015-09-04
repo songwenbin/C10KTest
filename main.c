@@ -48,5 +48,6 @@ int main(int argc, char *argv[])
 {
 	setupSingalHandler();
 	initServer();
+	startServer();
         return 0;
 }

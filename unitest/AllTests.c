@@ -4,6 +4,7 @@
 
 CuSuite* WSTableSuite();
 CuSuite* ProtocolSuite();
+CuSuite* WakeupSuite();
 
 void RunAllTests(void)
 {
@@ -12,6 +13,7 @@ void RunAllTests(void)
 
 	CuSuiteAddSuite(suite, WSTableSuite());
 	CuSuiteAddSuite(suite, ProtocolSuite());
+	CuSuiteAddSuite(suite, WakeupSuite());
 
 	CuSuiteRun(suite);
 	CuSuiteSummary(suite, output);

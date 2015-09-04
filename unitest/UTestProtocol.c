@@ -32,13 +32,13 @@ void TestProtocol(CuTest *tc)
 	server.table = CreateWSTable();
 	client *c = createClientTest(5);
 
-	c->querybuf[0] = DEVICE_CONN;
+	c->querybuf[0] = REGISTER_DEVICE_HEAD;
 	c->querybuf[1] = 2;
 	c->querybuf[2] = 'a';
 	c->querybuf[3] = 'b';
 
 	int i = parseProtocolHeader(c);
-	CuAssertIntEquals(tc, DEVICE_CONN, i);
+	CuAssertIntEquals(tc, REGISTER_DEVICE_HEAD, i);
 	char *actual = parseDeviceId(c, &i);
 	CuAssertIntEquals(tc, 2, i);
 	char *expected = strdup("ab");

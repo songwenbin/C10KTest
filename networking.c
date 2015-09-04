@@ -8,8 +8,11 @@
 #include "protocol.h"
 
 void readDataFromClient(aeEventLoop *el, int fd, void *privdata, int mask); 
+void processInputBuffer(client *c);
+void processRegisterCommand(client *c, char *id, int len);
+void processWakeupCommand(client *c, char *id, int len);
+void processProtocolCommand(client *c, char head, char *id, int len);
 
-//
 client *createClient(int fd)
 {
         client *cli = malloc(sizeof(cli));
@@ -71,7 +74,6 @@ void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask) {
 	}
 }
 
-void processInputBuffer(client *c);
 void readDataFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
         client *c = (client *)privdata;
 	int nread, readlen;
@@ -96,27 +98,40 @@ void readDataFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
 	processInputBuffer(c);
 }
 
-void processInputBuffer(client *c) {
-        //printf("%s", c->querybuf);
-	char *id;
+void processInputBuffer(client *c) 
+{
 	int len = 0;
+	char head = parseProtocolHeader(c);
+	char *id   = parseDeviceId(c, &len);
+	c->querybuf_idx = 0;
+	processProtocolCommand(c, head, id, len);
+}
 
-	if (parseProtocolHeader(c) == DEVICE_CONN) {
-		id = parseDeviceId(c, &len);
-		if (len > 1024 - c->querybuf_idx) {
-			c->querybuf_idx = 0;
-			return;
-		}
-		addId2WSEntry(server.table, c->fd, id, len);
+void processProtocolCommand(client *c, char head, char *id, int len)
+{
+        if (head == REGISTER_DEVICE_HEAD) {
+		processRegisterCommand(c, id, len);
+	} else if (head == WAKEUP_DEVICE_HEAD) {
+		processWakeupCommand(c, id, len);
+	}
+}
 
-		int i = 0;
-		printf("len :%d\n", len);
-		printf("data:");
-		for (i = 0; i < len; i++ ) {
-			printf("%c", id[i]);
-		}
-		printf("\n");
-		free(id);
+void processRegisterCommand(client *c, char *id, int len)
+{
+	addId2WSEntry(server.table, c->fd, id, len);
+}
+
+void processWakeupCommand(client *c, char *id, int len)
+{
+        struct WSEntry *result;
+	result = searchWSEntryById(server.table, id, len);
+	if (result != NULL) {
+		c->dfd = getFDofWSEntryById(server.table, id, len);
+		c->dstring = strdup(result->wakestr);
+		delWSEntryById(server.table, id, len);
+	} else {
+		c->dfd = c->fd;
+		c->dstring = strdup("error");
 	}
 }
 

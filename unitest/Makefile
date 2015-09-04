@@ -14,6 +14,7 @@ TESTOBJS=AllTests.c
 TESTOBJS+=CuTest.c
 TESTOBJS+=UTestProtocol.c
 TESTOBJS+=UTestWSTable.c
+TESTOBJS+=UTestWakeup.c
 
 UniTest: $(OBJS)
 	gcc -o $@ $(TESTOBJS) $(OBJS) -I../

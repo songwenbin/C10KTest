@@ -28,6 +28,8 @@ typedef struct client {
         int fd;
 	char* querybuf;
 	int querybuf_idx;
+	int dfd;
+	char* dstring;
 } client;
 
 struct wakeupServer server;
